@@ -1,7 +1,7 @@
 # Install Notes
 
 Chab is distributed from the public [Chab CLI repository](https://github.com/vincentsch/chab-cli).
-The initial beta release is version **0.1.0**. The app and CLI use the same
+These full-beta installation instructions are pinned to version **0.1.1**. The app and CLI use the same
 `https://www.chab.ai` origin. The CLI does not automatically update itself.
 
 ## Install The Binary
@@ -9,9 +9,9 @@ The initial beta release is version **0.1.0**. The app and CLI use the same
 Download the installer from the matching version, inspect it, then run it:
 
 ```bash
-curl -fsSLo /tmp/chab-install-v0.1.0.sh https://raw.githubusercontent.com/vincentsch/chab-cli/v0.1.0/scripts/install.sh
-less /tmp/chab-install-v0.1.0.sh
-sh /tmp/chab-install-v0.1.0.sh --version 0.1.0
+curl -fsSLo /tmp/chab-install-v0.1.1.sh https://raw.githubusercontent.com/vincentsch/chab-cli/v0.1.1/scripts/install.sh
+less /tmp/chab-install-v0.1.1.sh
+sh /tmp/chab-install-v0.1.1.sh --version 0.1.1
 export PATH="$HOME/.local/bin:$PATH"
 chab version --json
 ```
@@ -19,8 +19,8 @@ chab version --json
 The installer verifies the archive against the release SHA-256 checksum file
 before installing the binary. Linux and macOS have amd64/arm64 archives;
 Windows amd64 users can download and verify the zip from the
-[versioned release](https://github.com/vincentsch/chab-cli/releases/tag/v0.1.0).
-The `chab_0.1.0_agent.zip` skill archive has its own checksum in that release.
+[versioned release](https://github.com/vincentsch/chab-cli/releases/tag/v0.1.1).
+The `chab_0.1.1_agent.zip` skill archive has its own checksum in that release.
 Extract it into a temporary directory and copy `chab/SKILL.md` to one of the
 destinations below; the binary is installed separately.
 

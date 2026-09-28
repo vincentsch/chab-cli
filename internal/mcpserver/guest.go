@@ -129,7 +129,8 @@ func (r registry) guestAllowedTools(ctx context.Context) (bool, map[string]bool,
 	}
 	for _, key := range guest.SupportedRouteOperationKeys {
 		switch key {
-		case "auth.me", "credits.get", "operations.get", "operations.result", "operations.artifact", "operations.artifact_download", "operations.cancel":
+		case "auth.me", "credits.get", "operations.get", "operations.result", "operations.artifact", "operations.artifact_download", "operations.cancel",
+			"files.create", "files.list", "files.get", "files.delete", "files.download", "llm.models":
 			if op, ok := registry.Find(key); ok && (op.RequiredScope == "" || slices.Contains(identity.Scopes, op.RequiredScope)) {
 				allowed[operationToolName(op.ID)] = true
 			}

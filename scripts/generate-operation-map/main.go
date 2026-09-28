@@ -63,7 +63,7 @@ func generate() ([]byte, error) {
 	provenance := registry.Provenance()
 	fmt.Fprintf(&b, "# Chab Operation Map\n\n")
 	fmt.Fprintf(&b, "Generated from the pinned public API fixture at backend revision `%s`.\n\n", provenance.BackendRevision)
-	fmt.Fprintf(&b, "The Local MCP column shows registered tools for a signed-in API key. With a browser-issued guest trial credential, discovery and calls are constrained by the live `/v1/cli/compatibility` guest-local-MCP list: currently `chab_search_web` and `chab_contacts_email_verify`, plus identity, credits, current-operation status/result/artifact/download/cancel and local action helpers. Guest credentials do not authorize management, connected-account, billing, paid-only or hosted MCP tools.\n\n")
+	fmt.Fprintf(&b, "The Local MCP column shows registered tools for a signed-in API key. With a browser-issued guest trial credential, discovery and calls are constrained by the live `/v1/cli/compatibility` guest-local-MCP list for the full beta catalog, plus identity, credits, own-file/model discovery, current-operation status/result/artifact/download/cancel and local action helpers. Actual health, scopes, allowances and the shared free budget govern starts. Guest credentials do not authorize management, connected-account, billing, operation-history or hosted MCP tools.\n\n")
 	fmt.Fprintf(&b, "| Operation | Method | Path | Owner | CLI | Local MCP | Availability | Behavior | Output | Scope | Idempotency |\n")
 	fmt.Fprintf(&b, "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n")
 	bindingByID := map[string]operationmap.Binding{}

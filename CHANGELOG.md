@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 — Full public beta
+
+- Discover the backend's complete 19-operation free catalog dynamically, with scoped file/model helpers and fresh authority checks. Private management and connected-account tools remain unavailable to guests.
+- Keep confirmation required before effectful requests, and deny removed scopes, routes, paused starts and malformed compatibility evidence even with valid confirmed input.
+- Refresh the standalone skills, command help and installation guidance for the full-beta catalog. Version0.1.0 remains immutable; these changes belong to the0.1.1 candidate, not a claim of deployment or publication.
+
 ## 2026-09-25 — Single-origin Chab beta preparation
 
 - Use `https://www.chab.ai` for browser authorization and `https://www.chab.ai/v1` for API/local MCP defaults; keep saved custom destinations and the existing localhost safety behavior.

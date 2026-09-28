@@ -110,11 +110,15 @@ For a browser-issued guest trial credential, use `chab setup` locally or a
 user-managed `CHAB_API_KEY` secret. The guest REST bearer is not a hosted MCP
 OAuth token. Hosted MCP at the backend `/mcp` URL uses browser OAuth/PKCE,
 not the CLI's local stdio/REST key; check live compatibility for availability.
-Local MCP discovery follows the backend's guest compatibility list: currently
-`chab_search_web` and `chab_contacts_email_verify` are the
-free operation starters, with identity, credits, current-operation and own
-action-recovery helpers. Do not attempt management, connected-account,
-billing, paid-only or operation-history tools under a guest credential.
+Local MCP discovery follows the backend's live guest compatibility list, not
+a fixed two-tool trial. The full beta exposes eligible provider operations
+across search, contacts, SEO, business data, scraping, screenshots, conversion,
+LLM, translation and research, plus identity, credits, current-operation and
+own action-recovery helpers. Conversion uses the advertised own-file helpers;
+do not upload unrelated or confidential files without the user's approval.
+Actual health, scopes, individual allowances and the shared free budget still
+govern starts. Do not attempt management, connected-account, billing or
+operation-history tools under a guest credential.
 Promotional credits are one-off; preserve backend challenge, pause, exhaustion,
 expiry, revocation and signup-required errors rather than retrying around them.
 

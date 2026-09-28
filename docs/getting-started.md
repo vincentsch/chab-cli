@@ -322,10 +322,11 @@ and auth-file changes are reloaded for later calls. Changing `CHAB_API_KEY` in t
 For a no-signup trial, issue the credential in Chab's browser trial page and
 store it in a local profile with `chab setup` (or use `CHAB_API_KEY` from your
 own secret store). Never put its bearer in a host config or chat. Guest local
-MCP currently offers the advertised `chab_search_web` and
-`chab_contacts_email_verify` starters, balance, identity, current-operation
-helpers and own action receipts. Management, connected-account, billing,
-paid-only and hosted tools remain separate; a guest REST bearer is not a
+MCP offers the backend-advertised full beta starters, balance, identity,
+own-file and model-discovery helpers, current-operation helpers and own action
+receipts. Starts still require current health, scopes, allowances and free
+budget. Management, connected-account, billing and hosted tools remain
+separate; a guest REST bearer is not a
 hosted MCP OAuth credential. Promotional credits are one-off, and the backend
 may require a challenge, pause free usage, expire/revoke the key, or require
 signup after claim.

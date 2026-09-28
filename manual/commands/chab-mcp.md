@@ -23,7 +23,7 @@ profile's auth state written by chab login. Confirmation-gated tools require
 local.confirmation=true and recoverable action tools can be inspected with
 chab_action_list, chab_action_show and chab_action_resume. A browser-issued
 guest trial credential exposes only the backend-advertised free local MCP
-tools, not team, paid-only or hosted MCP tools. Changing `CHAB_API_KEY` in the host environment requires restarting or relaunching the MCP server process.
+tools, not private team-management, connected-account or hosted MCP tools. Changing `CHAB_API_KEY` in the host environment requires restarting or relaunching the MCP server process.
 
 Host config should point at the command, not contain credentials:
 

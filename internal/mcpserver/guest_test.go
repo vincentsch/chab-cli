@@ -21,7 +21,7 @@ func TestGuestLocalMCPAdvertisedToolsAndJournalOwnership(t *testing.T) {
 	var principalID atomic.Value
 	principalID.Store("guest_trial:principal_one")
 	var scopes atomic.Value
-	scopes.Store([]string{"api:search:read", "api:contact:write", "api:credits:read"})
+	scopes.Store([]string{"api:search:read", "api:contact:write", "api:credits:read", "api:files:read", "api:files:write", "api:llm:read"})
 	var spendEnabled atomic.Bool
 	spendEnabled.Store(true)
 	server := testutil.NewAPIServer(t, func(w http.ResponseWriter, r *http.Request) {
@@ -35,11 +35,11 @@ func TestGuestLocalMCPAdvertisedToolsAndJournalOwnership(t *testing.T) {
 				"guest_id": "guest_one", "scopes": scopes.Load().([]string),
 			}))
 		case "/v1/cli/compatibility":
-			supported := []string{"auth.me", "credits.get", "operations.get", "operations.result", "operations.artifact", "operations.artifact_download", "operations.cancel"}
+			supported := []string{"auth.me", "credits.get", "operations.get", "operations.result", "operations.artifact", "operations.artifact_download", "operations.cancel", "files.list", "files.get", "files.delete", "files.download", "llm.models"}
 			guestTools := []map[string]any{}
 			operationKeys := []string{}
 			if spendEnabled.Load() {
-				supported = append(supported, "search.web", "contacts.email_verify")
+				supported = append(supported, "search.web", "contacts.email_verify", "files.create")
 				operationKeys = []string{"search.web", "contacts.email_verify"}
 				guestTools = []map[string]any{
 					{"tool_name": "chab_search_web", "operation_key": "search.web", "scope": "api:search:read", "method": "POST", "path": "/v1/search/web", "idempotency_required": true, "funding_mode": "promotional_only", "credit_source": "guest_trial"},
@@ -88,7 +88,7 @@ func TestGuestLocalMCPAdvertisedToolsAndJournalOwnership(t *testing.T) {
 	for _, raw := range tools {
 		names = append(names, raw.(map[string]any)["name"].(string))
 	}
-	for _, name := range []string{"chab_search_web", "chab_contacts_email_verify", "chab_auth_me", "chab_credits_get", "chab_operations_cancel", "chab_action_resume"} {
+	for _, name := range []string{"chab_search_web", "chab_contacts_email_verify", "chab_auth_me", "chab_credits_get", "chab_operations_cancel", "chab_action_resume", "chab_files_create", "chab_files_list", "chab_files_get", "chab_files_delete", "chab_files_download", "chab_llm_models"} {
 		if !containsStringString(names, name) {
 			t.Fatalf("guest tools missing %s: %v", name, names)
 		}
@@ -119,7 +119,7 @@ func TestGuestLocalMCPAdvertisedToolsAndJournalOwnership(t *testing.T) {
 	limited := responseResult(t, h.request("tools/list", map[string]any{}))["tools"].([]any)
 	for _, raw := range limited {
 		name := raw.(map[string]any)["name"].(string)
-		if name == "chab_search_web" || name == "chab_contacts_email_verify" {
+		if name == "chab_search_web" || name == "chab_contacts_email_verify" || strings.HasPrefix(name, "chab_files_") || name == "chab_llm_models" {
 			t.Fatalf("limited scope advertised %s", name)
 		}
 	}

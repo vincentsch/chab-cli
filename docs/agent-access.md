@@ -47,11 +47,12 @@ are covered, not that all operations in that family are startable.
 A guest can issue a short-lived trial credential in the browser, then enter it
 locally with `chab setup` or `chab login --api-key`. Do not paste the bearer into
 agent chat or host configuration. For a guest profile, local MCP consults the
-backend compatibility document and currently lists only `chab_search_web` and
-`chab_contacts_email_verify` as operation starters, plus safe identity, balance,
+backend compatibility document for eligible operations across the full beta
+catalog, plus safe identity, balance, own-file helpers, model discovery,
 current-operation status/result/artifact/download/cancel, and own action
-receipts. It denies team management, billing, connected accounts, paid-only
-operations and operation-history listing before sending those calls. The
+receipts. Actual health, scopes, allowances and the shared free budget govern
+starts. It denies team management, billing, connected accounts and
+operation-history listing before sending those calls. The
 backend still decides balance, risk challenges, expiry, revocation and claim.
 Guest action receipts are tied to the principal ID from `/v1/me`; a rotated
 credential cannot resume another principal's action.

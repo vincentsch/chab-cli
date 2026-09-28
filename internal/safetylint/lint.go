@@ -52,6 +52,7 @@ func urlAllowed(rawURL string) bool {
 	switch candidate {
 	case "https://github.com/vincentsch/chab-cli",
 		"https://raw.githubusercontent.com/vincentsch/chab-cli/v0.1.0/scripts/install.sh",
+		"https://raw.githubusercontent.com/vincentsch/chab-cli/v0.1.1/scripts/install.sh",
 		"https://github.com/vincentsch/chab-saas",
 		"https://github.com/vincentsch/chab-saas/blob/main/framework/agent-access.md",
 		"https://github.com/vincentsch/chab-saas/blob/main/framework/agent-access.md#hosted-mcp-planned",
