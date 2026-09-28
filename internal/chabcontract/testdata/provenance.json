@@ -1,0 +1,19 @@
+{
+  "backend_revision": "9f26a3b73961aebdf37055c723c63a8e2bccc87c",
+  "fixtures": [
+    {
+      "file": "chab-v1.yaml",
+      "backend_revision": "9f26a3b73961aebdf37055c723c63a8e2bccc87c",
+      "source": "openapi/chab-v1.yaml",
+      "sha256": "96d8022c2bc9dce4b6daac6d2b8fe8e3c09154e450c49399ee9a8cb8498c111b",
+      "operations": 98,
+      "paths": 84
+    },
+    {
+      "file": "chab-oauth-device.yaml",
+      "backend_revision": "9f26a3b73961aebdf37055c723c63a8e2bccc87c",
+      "source": "openapi/chab-oauth-device.yaml",
+      "sha256": "e0747f14b2eb978d70e7bca9b10fb4665915be6e51a9e9e32aa2e1f1e9af2893"
+    }
+  ]
+}

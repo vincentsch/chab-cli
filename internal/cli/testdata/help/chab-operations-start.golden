@@ -1,0 +1,56 @@
+Start a supported operation by operation key using a JSON request body.
+
+The start command is the generic entrypoint for supported operation starts. It
+creates or reuses one local action record and one idempotency key for the
+logical action before sending the effectful request.
+Paid live submissions require confirmation through --yes or an interactive
+prompt. Use --dry-run for a local preview that does not resolve credentials or
+contact the API. For operations whose schema supports dry_run, an input body
+with "dry_run": true performs authenticated server validation without creating
+a local action record or sending an idempotency key. JSON output is one stable
+object with action, remote operation and recovery fields. Use --plain to print
+the accepted operation id or action id. In --no-prompt or non-interactive mode,
+use --yes to acknowledge paid live work. Pass --idempotency-key to supply a
+caller-owned replay key.
+
+Related commands:
+  chab operations resume
+  chab operations wait
+  chab operations schema
+
+Usage:
+  chab operations start <operation-key> [flags]
+
+Examples:
+  chab operations start search.web --input @request.json --yes
+  chab operations start search.web --input @request.json --yes --wait --json
+  chab operations start search.web --input @request.json --dry-run
+  chab operations start examples.echo --input @request.json --plain
+
+Flags:
+      --dry-run                  preview the resolved request without resolving credentials or contacting the API
+  -h, --help                     help for start
+      --idempotency-key string   explicit idempotency key; generated when omitted
+      --input string             JSON request body, @path, or @- for stdin
+      --max-credits int          set max_credit_budget for supported operations
+      --set stringArray          top-level request field as name=json (repeatable)
+      --wait                     wait for an accepted operation to reach a terminal state
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input

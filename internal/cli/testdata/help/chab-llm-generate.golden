@@ -1,0 +1,60 @@
+Start an LLM generation operation.
+
+This command resolves convenience flags and --input into one request body,
+creates a private action record before live submission, and sends exactly one
+idempotency key for the logical action. Use --dry-run for a local preview; to
+request a server dry run, include "dry_run": true in the JSON body when the
+operation supports it.
+
+Paid live submissions require confirmation through --yes or an interactive
+prompt. JSON output is one stable object with action, remote operation and
+recovery fields. Use --plain to print the accepted operation id or action id.
+In --no-prompt or non-interactive mode, use --yes to acknowledge paid live
+work. When the operation schema supports dry_run, an input body with
+"dry_run": true performs authenticated server validation without creating a
+local action record or sending an idempotency key. Pass --idempotency-key to
+supply a caller-owned replay key for live work.
+
+Related commands:
+  chab operations schema llm.generate
+  chab operations resume
+
+Usage:
+  chab llm generate [flags]
+
+Examples:
+  chab llm generate --model fast-chat --prompt 'Write a haiku' --max-credits 20 --yes
+
+Flags:
+      --dry-run                  preview the resolved request without resolving credentials or contacting the API
+  -h, --help                     help for generate
+      --idempotency-key string   explicit idempotency key; generated when omitted
+      --input string             JSON request body, @path, or @- for stdin
+      --max-credits int          set max_credit_budget for supported operations
+      --max-output-tokens int    maximum output tokens
+      --messages string          messages array as JSON
+      --model string             model identifier
+      --prompt string            prompt text
+      --set stringArray          top-level request field as name=json (repeatable)
+      --system string            system instruction
+      --temperature string       temperature JSON number
+      --wait                     wait for an accepted operation to reach a terminal state
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input

@@ -1,0 +1,57 @@
+Inspect and recover Chab operations.
+
+Operation starts create a private local action record before sending the first
+effectful request. The action record stores recovery metadata and an
+idempotency key, but never stores a bearer token or request body.
+Journal directories are created private where the platform supports file
+permissions. Record writes sync the data file before atomic publication;
+directory metadata sync is best effort for portability.
+
+Schemas are read from the pinned Chab API contract embedded in the binary, so
+schema inspection works offline.
+
+Related commands:
+  chab search web
+  chab credits balance
+
+Usage:
+  chab operations [flags]
+  chab operations [command]
+
+Available Commands:
+  actions     Inspect local action records
+  artifact    Fetch operation artifact metadata
+  bulk-cancel Cancel operations by filter
+  cancel      Cancel an operation
+  estimate    Estimate an operation request
+  list        List remote operations
+  result      Fetch operation result metadata
+  resume      Resume a local action
+  schema      Show an embedded operation schema
+  show        Show operation status
+  start       Start a supported operation by key
+  wait        Wait for an operation to finish
+
+Flags:
+  -h, --help   help for operations
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input
+
+Use "chab operations [command] --help" for more information about a command.

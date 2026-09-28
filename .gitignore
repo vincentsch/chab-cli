@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+
+# Go
+bin/
+dist/
+coverage.out
+*.test
+/vilt
+/vilt.exe
+
+# Local editor/OS files
+.DS_Store
+.idea/
+.vscode/

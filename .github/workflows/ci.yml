@@ -1,0 +1,181 @@
+name: CI
+
+# Quality gates for the reference chab CLI. Runs without live Chab-SaaS
+# credentials.
+#
+# Jobs:
+#   quality  Linux-only full gate: tests, uncached file-backed checks, race,
+#            vet, vulnerability scan, gofmt drift, root help, manual-doc drift,
+#            checked examples, repo hygiene, and an offline proof under hostile
+#            CHAB_* environment variables.
+#   matrix   ubuntu/macos/windows: go test ./..., build, and offline smokes.
+#   goreleaser  Linux: `goreleaser check` (release-config drift) plus a snapshot
+#               artifact smoke that proves the archive matrix, checksums,
+#               safe members, local installer path, no-secret smoke, and
+#               injected version metadata.
+#
+# Contract -> check mapping:
+#   command catalog + shell behavior + committed-docs safety lint -> go test ./...
+#   file-backed docs/install/release/isolation checks           -> go test -count=1 ./internal/docscheck ./internal/installcheck ./internal/releasecheck ./internal/isolationcheck
+#   generated manual-doc drift                                  -> generate-command-docs --check
+#   generated operation-map drift                               -> generate-operation-map --check
+#   checked automation examples                                 -> scripts/check-examples
+#   reachable Go and standard-library vulnerabilities           -> govulncheck ./...
+#   Go formatting drift                                         -> gofmt -l drift check
+#   release archive/checksum/install path + ldflag metadata     -> goreleaser job
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Linux quality gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+
+      # Covers the command catalog, shell behavior, and committed-docs safety lint.
+      - name: Unit and contract tests
+        run: go test ./...
+
+      # These packages read committed files outside their package directory, so
+      # force execution instead of relying on Go's package test cache.
+      - name: Uncached file-backed checks
+        run: go test -count=1 ./internal/docscheck ./internal/installcheck ./internal/releasecheck ./internal/isolationcheck
+
+      - name: Race tests
+        run: go test -race ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Vulnerability scan
+        run: GOTOOLCHAIN="$(go env GOVERSION)" go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
+
+      # Non-mutating formatting drift check over tracked Go files.
+      - name: Formatting drift
+        run: gofmt_out="$(gofmt -l $(git ls-files '*.go'))" && test -z "$gofmt_out"
+
+      - name: Shell script syntax
+        run: |
+          set -eu
+          for f in scripts/*.sh examples/ci/*.sh examples/support/*.sh examples/agents/*.sh; do
+            [ -e "$f" ] || continue
+            sh -n "$f"
+          done
+
+      - name: Root help smoke
+        run: go run ./cmd/chab --help
+
+      # Fails on stale, missing, or orphaned committed manual/commands pages.
+      - name: Manual-doc drift
+        run: go run ./scripts/generate-command-docs --check
+
+      - name: Operation-map drift
+        run: go run ./scripts/generate-operation-map --check
+
+      # Validates the example manifest against the tree/catalog and runs every
+      # non-live script through sh against a fresh local mock. Linux-only: the
+      # checker shells out through sh and validates POSIX executable modes.
+      - name: Checked automation examples
+        run: go run ./scripts/check-examples
+
+      # Repository hygiene: the root build artifact must never be tracked again.
+      - name: No tracked chab binary
+        run: test -z "$(git ls-files chab chab.exe)"
+
+      # Offline proof: help, version, completion, and doc generation must exit 0
+      # under hostile CHAB_* values. The dead-port base URL makes exit 0 the
+      # "no network" proof: real API contact would fail connection-refused.
+      - name: Offline behavior under hostile CHAB_* environment
+        run: |
+          hostile_dir="$(mktemp -d)"
+          trap 'rm -rf "$hostile_dir"' EXIT
+          hostile_env=(
+            CHAB_API_KEY=poison
+            CHAB_BASE_URL=http://localhost:9
+            CHAB_API_BASE_URL=http://localhost:9
+            CHAB_PROFILE=poison
+            "CHAB_CONFIG=$hostile_dir/config.yml"
+            "CHAB_AUTH_FILE=$hostile_dir/auth.json"
+          )
+          env "${hostile_env[@]}" go run ./cmd/chab --help >"$hostile_dir/help.log" 2>&1
+          env "${hostile_env[@]}" go run ./cmd/chab version --json >"$hostile_dir/version.log" 2>&1
+          env "${hostile_env[@]}" go run ./cmd/chab completion bash >"$hostile_dir/completion.log" 2>&1
+          env "${hostile_env[@]}" go run ./scripts/generate-command-docs --check >"$hostile_dir/manual-docs.log" 2>&1
+          env "${hostile_env[@]}" go run ./scripts/generate-operation-map --check >"$hostile_dir/operation-map.log" 2>&1
+          if grep -R -n -E 'poison|config\.yml|auth\.json' "$hostile_dir"; then
+            echo "offline command leaked hostile env or config/auth path" >&2
+            exit 1
+          fi
+          if [ -e "$hostile_dir/config.yml" ] || [ -e "$hostile_dir/auth.json" ]; then
+            echo "offline command created hostile config/auth state" >&2
+            exit 1
+          fi
+
+  matrix:
+    name: Cross-platform build and smoke
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Tests
+        run: go test ./...
+      - name: Build
+        run: go build ./cmd/chab
+      - name: Version smoke
+        run: go run ./cmd/chab version --json
+      - name: Completion smoke
+        run: go run ./cmd/chab completion bash
+
+  goreleaser:
+    name: GoReleaser config and snapshot smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # GoReleaser snapshot resolves git context for the version and commit.
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v7.2.2
+        with:
+          install-only: true
+          version: v2.16.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: GoReleaser version
+        run: goreleaser --version
+      # Fails on deprecated or invalid release config before tag time.
+      - name: GoReleaser config check
+        run: goreleaser check
+      # Builds a snapshot and verifies archives, checksums, safe members, local
+      # installer execution, no-secret smoke, and injected metadata. Not wired
+      # into `go test ./...`.
+      - name: Snapshot artifact smoke
+        run: go run ./scripts/release-snapshot-smoke

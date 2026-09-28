@@ -1,0 +1,40 @@
+Show public API health.
+
+This command calls unauthenticated GET /v1/health and never reads credentials.
+
+Related commands:
+  chab errors
+  chab doctor
+  chab api get /health
+
+Usage:
+  chab health [flags]
+
+Examples:
+  chab health
+  chab health --plain
+  chab health --json
+  chab health --jq .status
+  chab health --template '{{.status}}'
+
+Flags:
+  -h, --help   help for health
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input

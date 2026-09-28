@@ -1,0 +1,52 @@
+Print one known non-secret CLI configuration value.
+
+Supported keys are current_profile and profiles.<name>.base_url,
+profiles.<name>.api_base_url, profiles.<name>.locale,
+profiles.<name>.default_output, and
+profiles.<name>.defaults.project_list_limit. Profile names may contain dots.
+Stored credential keys and unknown YAML keys are never shown.
+
+All persisted profile names and known profile values are validated before any
+result is printed. An invalid persisted profile therefore makes the lookup fail
+without partial output, even when a different profile key was requested.
+
+JSON output is an object with key, value, and source, where source is file,
+derived, or default.
+
+Output modes: default human detail, --plain tab-separated fields, --json stable
+JSON, and --jq/--template transforms over the documented JSON value.
+
+Related commands:
+  chab config list
+  chab config set
+
+Usage:
+  chab config get <key> [flags]
+
+Examples:
+  chab config get current_profile
+  chab config get profiles.staging.base_url
+  chab config get profiles.production.eu.api_base_url --jq .value
+  chab config get current_profile --template '{{.value}}'
+
+Flags:
+  -h, --help   help for get
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input

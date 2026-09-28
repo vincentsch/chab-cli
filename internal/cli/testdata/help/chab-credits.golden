@@ -1,0 +1,47 @@
+Inspect team credits through the product API.
+
+Balance inspection and cursor-paginated transaction history are available as
+team-level reads.
+
+Credits are a team-level resource rather than Project-scoped. A key with
+credits read capability reports the whole team's balance and transactions.
+
+Related commands:
+  chab login
+  chab health
+
+Usage:
+  chab credits [flags]
+  chab credits [command]
+
+Examples:
+  chab credits balance
+  chab credits transactions
+
+Available Commands:
+  balance      Show the available credit balance
+  transactions List credit transactions
+
+Flags:
+  -h, --help   help for credits
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input
+
+Use "chab credits [command] --help" for more information about a command.

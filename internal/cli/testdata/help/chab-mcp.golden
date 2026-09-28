@@ -1,0 +1,65 @@
+Run local MCP integrations for agent and editor hosts.
+
+The MCP server is local stdio only. It exposes local auth-environment,
+health and error-catalog tools plus operation-ID tools backed by the public
+Chab API contract. It does not host HTTP, SSE, prompts, resources, sampling,
+roots, or server-initiated requests.
+
+Startup, discovery, tools/list, chab_auth_env, chab_health, and chab_errors
+require no credential. API-backed tools such as chab_auth_me,
+chab_credits_get, chab_credits_transactions_list and chab_search_web require
+either CHAB_API_KEY inherited by the MCP server process or the selected
+profile's auth state written by chab login. Confirmation-gated tools require
+local.confirmation=true and recoverable action tools can be inspected with
+chab_action_list, chab_action_show and chab_action_resume. A browser-issued
+guest trial credential exposes only the backend-advertised free local MCP
+tools, not team, paid-only or hosted MCP tools. Changing `CHAB_API_KEY` in the host environment requires restarting or relaunching the MCP server process.
+
+Host config should point at the command, not contain credentials:
+  codex mcp add chab -- chab mcp serve
+  claude mcp add --transport stdio chab -- chab mcp serve
+
+Use normal chab flags for non-default profiles, for example:
+  chab --profile staging mcp serve
+
+Related commands:
+  chab auth env
+  chab login
+  chab doctor
+
+Usage:
+  chab mcp [flags]
+  chab mcp [command]
+
+Examples:
+  chab mcp --help
+  chab mcp serve --help
+  codex mcp add chab -- chab mcp serve
+  claude mcp add --transport stdio chab -- chab mcp serve
+
+Available Commands:
+  serve       Serve Chab tools over MCP stdio
+
+Flags:
+  -h, --help   help for mcp
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input
+
+Use "chab mcp [command] --help" for more information about a command.

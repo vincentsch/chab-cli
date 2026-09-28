@@ -1,0 +1,77 @@
+# GoReleaser configuration for the reference chab CLI.
+#
+# Pinned tool: GoReleaser v2.16.0 (the version installed in CI). Validated on
+# every push and pull request with `goreleaser check` and exercised by the
+# snapshot artifact smoke (scripts/release-snapshot-smoke). A tag-triggered
+# workflow runs `goreleaser release` to publish the archives and checksum file.
+#
+# Local snapshot build (requires GoReleaser v2.16.0 on PATH):
+#   goreleaser release --snapshot --clean
+#   go run ./scripts/release-snapshot-smoke
+#
+# Real end-to-end release prerequisites:
+#   - the vincentsch/chab-cli repository must exist on GitHub;
+#   - a vMAJOR.MINOR.PATCH tag must be pushed there;
+#   - the release workflow needs `contents: write` so the standard GITHUB_TOKEN
+#     can create the release and upload assets.
+version: 2
+
+project_name: chab
+
+snapshot:
+  # Local snapshots are never published, but the installer smoke intentionally
+  # serves them through the same SemVer release path as real archives.
+  version_template: "0.0.0"
+
+builds:
+  - id: chab
+    main: ./cmd/chab
+    binary: chab
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    # Trim the default six-target cross-product to the five contract targets by
+    # dropping windows/arm64, which is not in the release playbook.
+    ignore:
+      - goos: windows
+        goarch: arm64
+    ldflags:
+      - -s -w
+      - -X github.com/vincentsch/chab-cli/internal/cli.Version={{ .Version }}
+      - -X github.com/vincentsch/chab-cli/internal/cli.Commit={{ .FullCommit }}
+      - -X github.com/vincentsch/chab-cli/internal/cli.Date={{ .Date }}
+
+archives:
+  # Names must not depend on GoReleaser defaults: pin lower-case Go-style
+  # {{ .Os }}/{{ .Arch }} tokens. tar.gz everywhere, zip on Windows.
+  - id: binaries
+    name_template: "chab_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    # Only list files that exist; there is no LICENSE in this repo.
+    files:
+      - README.md
+
+  # One portable standalone skill, versioned and checksummed alongside binaries.
+  - id: agent-skill
+    meta: true
+    name_template: "chab_{{ .Version }}_agent"
+    formats:
+      - zip
+    files:
+      - src: .agents/skills/chab/SKILL.md
+        dst: chab
+        strip_parent: true
+
+checksum:
+  name_template: "chab_{{ .Version }}_checksums.txt"

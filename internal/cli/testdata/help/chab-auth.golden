@@ -1,0 +1,56 @@
+Inspect and manage API authentication for chab.
+
+Team API keys are created and revoked in the product web app. This family
+stores an API key after browser authorization or manual entry validates it
+with GET /v1/me, reports the effective credential and token state,
+removes local stored credentials, and shows the effective non-secret runtime
+values used by CI invocations.
+
+chab never prints an API key. Only non-secret runtime, token, and team metadata
+can appear in output.
+
+Related commands:
+  chab login
+  chab whoami
+  chab profile show
+  chab doctor
+
+Usage:
+  chab auth [flags]
+  chab auth [command]
+
+Examples:
+  chab auth login
+  chab auth status
+  chab auth env --json
+  chab auth logout
+
+Available Commands:
+  env         Report the effective authentication environment
+  login       Authorize and store an API or guest trial key
+  logout      Remove the stored credential for the active profile
+  status      Report credential and key state
+
+Flags:
+  -h, --help   help for auth
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input
+
+Use "chab auth [command] --help" for more information about a command.

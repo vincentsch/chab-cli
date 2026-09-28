@@ -1,0 +1,50 @@
+Set one supported non-secret CLI configuration value.
+
+Supported writable keys are current_profile, profiles.<name>.base_url,
+profiles.<name>.api_base_url, profiles.<name>.locale, and
+profiles.<name>.defaults.project_list_limit. The target profile must already
+exist; this command never creates profiles. Use an empty value for locale to
+persist an unset Accept-Language preference.
+
+Stored credentials are not part of config.yml. Secret-bearing keys are refused
+locally; manage credentials with chab login and chab logout.
+
+profiles.<name>.default_output is readable with config get and config list, but
+is not writable in this config contract.
+
+This command has no stable JSON shape, so --jq and --template are not supported.
+
+Related commands:
+  chab config get
+  chab profile create
+
+Usage:
+  chab config set <key> <value> [flags]
+
+Examples:
+  chab config set current_profile staging
+  chab config set profiles.staging.base_url https://staging.example.test
+  chab config set profiles.staging.locale ""
+  chab config set profiles.staging.defaults.project_list_limit 50 --plain
+
+Flags:
+  -h, --help   help for set
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input

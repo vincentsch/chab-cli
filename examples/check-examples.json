@@ -1,0 +1,130 @@
+{
+  "examples": [
+    {
+      "script": "examples/agents/idempotent-raw-mutation.sh",
+      "description": "Preview and recover one explicitly idempotent raw mutation.",
+      "exit": 0,
+      "stdout_contains": [
+        "\"method\": \"POST\"",
+        "false",
+        "true"
+      ],
+      "mock_requests": 3,
+      "commands": [
+        {
+          "path": [
+            "api",
+            "post"
+          ],
+          "flags": [
+            "dry-run",
+            "field",
+            "idempotency-key",
+            "include-meta",
+            "jq",
+            "json",
+            "no-prompt"
+          ]
+        }
+      ]
+    },
+    {
+      "script": "examples/ci/env-auth-and-errors.sh",
+      "description": "Use environment authentication and handle a stable API error.",
+      "exit": 0,
+      "stdout_contains": [
+        "\"spendable_balance\": 131",
+        "131",
+        "\"secret_variable\": \"CHAB_API_KEY\""
+      ],
+      "stderr_contains": [
+        "\"code\":\"not_found\""
+      ],
+      "mock_requests": 3,
+      "commands": [
+        {
+          "path": [
+            "auth",
+            "env"
+          ],
+          "flags": [
+            "json"
+          ]
+        },
+        {
+          "path": [
+            "api",
+            "get"
+          ],
+          "flags": [
+            "jq",
+            "json"
+          ]
+        }
+      ]
+    },
+    {
+      "script": "examples/support/profile-metadata.sh",
+      "description": "Inspect selected profile state, credits, and response metadata.",
+      "exit": 0,
+      "stdout_contains": [
+        "Created\tprofile support",
+        "\"name\": \"support\"",
+        "key\tprofiles.support.base_url",
+        "\"spendable_balance\": 131",
+        "mock-req-000002",
+        "\"limit\":25"
+      ],
+      "mock_requests": 2,
+      "commands": [
+        {
+          "path": [
+            "profile",
+            "create"
+          ],
+          "flags": [
+            "base-url",
+            "plain"
+          ]
+        },
+        {
+          "path": [
+            "profile",
+            "show"
+          ],
+          "flags": [
+            "json"
+          ]
+        },
+        {
+          "path": [
+            "config",
+            "get"
+          ],
+          "flags": [
+            "plain"
+          ]
+        },
+        {
+          "path": [
+            "credits",
+            "balance"
+          ],
+          "flags": [
+            "json"
+          ]
+        },
+        {
+          "path": [
+            "api",
+            "get"
+          ],
+          "flags": [
+            "include-meta",
+            "jq"
+          ]
+        }
+      ]
+    }
+  ]
+}

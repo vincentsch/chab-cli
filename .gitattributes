@@ -1,0 +1,6 @@
+*.golden text eol=lf
+manual/commands/*.md text eol=lf
+.agents/skills/**/*.md text eol=lf
+.claude/skills/**/*.md text eol=lf
+.vilt-agent-skill/*.md text eol=lf
+.vilt-agent-skill/manifest.sha256 text eol=lf

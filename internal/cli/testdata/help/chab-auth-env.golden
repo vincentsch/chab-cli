@@ -1,0 +1,60 @@
+Report the effective, non-secret authentication environment for this invocation.
+
+The command uses strict runtime resolution, including normal flag, environment,
+profile-file, normalization, and API-base derivation rules. This differs from
+profile show and config inspection, which report persisted profile-file state
+without applying all invocation overrides.
+
+JSON output is one stable object with exactly profile, base_url, api_base_url,
+locale, and secret_variable. locale remains present as an empty string when
+unset. Use --plain for ordered CHAB_* tab-separated rows; its CHAB_LOCALE row
+is omitted when locale is unset. Use --jq or --template to reshape the same
+stable JSON value.
+
+This is not an authentication or connectivity check. It may inspect whether
+the selected profile has a stored auth-file key but no saved destination, so a
+legacy auth-only profile keeps its localhost destination; the key is never
+returned. It does not authenticate, construct an API client, or contact the
+network. Set CHAB_API_KEY from your CI provider's secret store.
+Team API keys are created and revoked in the product web app.
+
+Copying both URL rows freezes the resolved API base URL. A later change to only
+CHAB_BASE_URL will not re-derive it while CHAB_API_BASE_URL remains explicitly
+set.
+
+Related commands:
+  chab profile show
+  chab config list
+  chab auth status
+
+Usage:
+  chab auth env [flags]
+
+Examples:
+  chab auth env
+  chab auth env --profile staging --plain
+  chab auth env --profile staging --json
+  chab auth env --profile staging --jq .api_base_url
+  chab auth env --profile staging --template '{{.profile}}'
+
+Flags:
+  -h, --help   help for env
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input

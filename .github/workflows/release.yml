@@ -1,0 +1,119 @@
+name: Release
+
+# Publishes chab binary archives, the standalone skill bundle and checksums when a stable release
+# tag is pushed.
+#
+# GitHub prerequisites for a real publishing run:
+#   - the vincentsch/chab-cli repository exists on GitHub;
+#   - a vMAJOR.MINOR.PATCH tag (for example v0.6.0) is pushed to it;
+#   - this workflow has `contents: write` so the standard GITHUB_TOKEN can
+#     create the release and upload assets. No Chab-SaaS credentials are used.
+#
+# Pinned tool: GoReleaser v2.16.0 via goreleaser/goreleaser-action@v7.2.2.
+# The tag workflow validates a local snapshot install before publishing.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'vincentsch/chab-cli'
+    name: Build and publish release artifacts
+    runs-on: ubuntu-latest
+    steps:
+      # Preflight: only stable vMAJOR.MINOR.PATCH tags may publish. The tag is
+      # read from an env var (not interpolated into the script) to avoid shell
+      # injection from a crafted ref name.
+      - name: Reject non-stable release tags
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Refusing to publish non-stable tag: $TAG" >&2
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          # Full tag/history access so GoReleaser resolves tags and changelog.
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v7.2.2
+        with:
+          install-only: true
+          version: v2.16.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --- Linux quality gate, re-run here before publishing ---
+      - name: Unit and contract tests
+        run: go test ./...
+      - name: Uncached file-backed checks
+        run: go test -count=1 ./internal/docscheck ./internal/installcheck ./internal/releasecheck ./internal/isolationcheck
+      - name: Race tests
+        run: go test -race ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Vulnerability scan
+        run: GOTOOLCHAIN="$(go env GOVERSION)" go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
+      - name: Formatting drift
+        run: gofmt_out="$(gofmt -l $(git ls-files '*.go'))" && test -z "$gofmt_out"
+      - name: Root help smoke
+        run: go run ./cmd/chab --help
+      - name: Manual-doc drift
+        run: go run ./scripts/generate-command-docs --check
+      - name: Operation-map drift
+        run: go run ./scripts/generate-operation-map --check
+      - name: Checked automation examples
+        run: go run ./scripts/check-examples
+      - name: No tracked chab binary
+        run: test -z "$(git ls-files chab chab.exe)"
+      - name: Offline behavior under hostile CHAB_* environment
+        run: |
+          hostile_dir="$(mktemp -d)"
+          trap 'rm -rf "$hostile_dir"' EXIT
+          hostile_env=(
+            CHAB_API_KEY=poison
+            CHAB_BASE_URL=http://localhost:9
+            CHAB_API_BASE_URL=http://localhost:9
+            CHAB_PROFILE=poison
+            "CHAB_CONFIG=$hostile_dir/config.yml"
+            "CHAB_AUTH_FILE=$hostile_dir/auth.json"
+          )
+          env "${hostile_env[@]}" go run ./cmd/chab --help >"$hostile_dir/help.log" 2>&1
+          env "${hostile_env[@]}" go run ./cmd/chab version --json >"$hostile_dir/version.log" 2>&1
+          env "${hostile_env[@]}" go run ./cmd/chab completion bash >"$hostile_dir/completion.log" 2>&1
+          env "${hostile_env[@]}" go run ./scripts/generate-command-docs --check >"$hostile_dir/manual-docs.log" 2>&1
+          env "${hostile_env[@]}" go run ./scripts/generate-operation-map --check >"$hostile_dir/operation-map.log" 2>&1
+          if grep -R -n -E 'poison|config\.yml|auth\.json' "$hostile_dir"; then
+            echo "offline command leaked hostile env or config/auth path" >&2
+            exit 1
+          fi
+          if [ -e "$hostile_dir/config.yml" ] || [ -e "$hostile_dir/auth.json" ]; then
+            echo "offline command created hostile config/auth state" >&2
+            exit 1
+          fi
+      - name: GoReleaser config check
+        run: goreleaser check
+      - name: Snapshot installer smoke
+        run: go run ./scripts/release-snapshot-smoke
+
+      # --- publish ---
+      - name: Publish release
+        run: goreleaser release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

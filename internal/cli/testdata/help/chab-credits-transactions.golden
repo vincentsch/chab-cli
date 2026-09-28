@@ -1,0 +1,63 @@
+List credit transactions for the authenticated team.
+
+Credits are team-level: the transaction history is not narrowed by a
+selected-project key scope.
+
+Pagination uses Chab cursor metadata. --cursor starts from a server-provided
+cursor, --page-size sets the API request limit, --limit caps total rows, and
+--all follows next_cursor until the API reports no more pages.
+
+JSON output is an array of transaction objects with fields id, occurred_at,
+kind, amount, resulting_spendable_balance, expires_at, operation_id,
+purchase_id, and description. description is localized display text and must
+not be parsed for behavior. amount is a signed integer credit unit. Default
+JSON omits request and pagination metadata.
+
+--include-meta adds safe transport context under meta when --json, --jq, or
+--template is selected. The ordinary value moves under data; output without
+--include-meta remains unchanged.
+
+Output modes: default human table, --plain tab-separated rows, --json stable
+JSON, and --jq/--template transforms over the documented JSON value.
+
+Related commands:
+  chab credits balance
+  chab health
+
+Usage:
+  chab credits transactions [flags]
+
+Examples:
+  chab credits transactions
+  chab credits transactions --limit 250
+  chab credits transactions --cursor eyJpZCI6MX0 --page-size 25
+  chab credits transactions --json
+  chab credits transactions --include-meta --jq .meta.cursor.next_cursor
+  chab credits transactions --jq '.[].amount'
+  chab credits transactions --template '{{range .}}{{.id}} {{.amount}}{{"\n"}}{{end}}'
+
+Flags:
+      --all             fetch every cursor page
+      --cursor string   opaque cursor returned by the API
+  -h, --help            help for transactions
+      --limit int       maximum total number of items to fetch
+      --page-size int   items per API request (1-100)
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input

@@ -1,0 +1,96 @@
+chab is the command-line interface for Chab. It talks to Chab's public
+REST API (/v1) using a scoped team API token from browser device login,
+manual entry, or CHAB_API_KEY. Browser-issued guest trial credentials can be
+used for the backend-advertised free operations without signup.
+
+Quick start:
+  chab version --json    # print build metadata for scripts
+  chab setup             # set up and verify a copied team or guest key
+  chab login             # authorize or replace a stored team API key
+  chab whoami --json     # print authenticated team and token data
+  chab doctor            # check local setup and API readiness
+  chab profile list      # inspect local connection profiles
+  chab config path       # print the local config and auth paths
+  chab health            # inspect public API health
+  chab errors --json     # inspect public API error catalog
+  chab search web --help # start a recoverable operation
+  chab files list        # inspect stored files
+  chab operations schema search.web # inspect embedded operation schema
+  chab api get /me --json # call a public API path directly
+  chab mcp serve --help  # configure local MCP tools
+
+Usage:
+  chab [flags]
+  chab [command]
+
+Authentication and Identity
+  auth        Inspect and manage API authentication
+  login       Authorize and store an API or guest trial key
+  logout      Remove the stored credential for the active profile
+  setup       Set up a verified API or guest trial profile
+  whoami      Show the authenticated team or guest principal
+
+Management
+  billing     Manage billing settings
+  credits     Inspect team credits
+  project     Manage projects
+  tokens      Manage team API tokens
+  usage       Show team API usage
+  webhooks    Manage webhook endpoints and replays
+
+Profiles and Configuration
+  config      Inspect and edit non-secret CLI configuration
+  profile     Manage connection profiles
+
+Raw API Access
+  api         Call public API endpoints directly
+
+Operations
+  business    Run business-data operations
+  contacts    Run contact discovery operations
+  convert     Run conversion operations
+  examples    Run example operations
+  llm         Run model operations
+  operations  Inspect and recover Chab operations
+  research    Run research operations
+  scrape      Run scrape operations
+  screenshots Run screenshot operations
+  search      Run search operations
+  seo         Run SEO operations
+  translate   Run translation operations
+
+Files and Connected Data
+  drive       Work with connected drive files
+  files       Work with stored files
+  mail        Work with connected mail
+
+Diagnostics and Utilities
+  completion  Generate the autocompletion script for the specified shell
+  doctor      Check local setup and API readiness
+  errors      List public API error codes
+  health      Show public API health
+  help        Help about any command
+  mcp         Run local MCP integrations
+  version     Print build metadata
+
+Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+  -h, --help                  help for chab
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input
+
+Use "chab [command] --help" for more information about a command.

@@ -1,0 +1,59 @@
+Check local setup and API readiness for common CLI workflows.
+
+Doctor resolves local config and auth paths without creating files. When a
+credential exists, it makes at most one GET /v1/me request. Missing
+credentials, unsafe auth-file permissions, unreachable API, unusable keys, and
+blocked plan API access are warnings. Malformed local config/auth files and
+invalid persisted profile values are failing findings.
+
+Stable finding ids are config.path, config.runtime, profile, api.base_url,
+locale, auth.path, auth.file, auth.permissions, credential.source,
+compatibility, api.connectivity, granted_scopes, token_controls,
+spending_allowance, and project_access.
+
+Exit model: 0 means pass or warnings; 1 means one or more failing findings.
+The readiness report still renders when doctor exits 1 because of failing
+findings. Invocation errors such as invalid flag or environment values keep
+stdout empty.
+
+JSON output has exactly the top-level fields status and findings. Each finding
+has id, severity, summary, and optional detail and request_id.
+Use --plain for a copy-safe TSV table. Use --jq or --template to reshape the
+same stable JSON bytes that --json emits.
+
+Related commands:
+  chab auth status
+  chab login
+  chab version
+
+Usage:
+  chab doctor [flags]
+
+Examples:
+  chab doctor
+  chab doctor --json
+  chab doctor --plain
+  chab doctor --jq .status
+  chab doctor --template '{{.status}}'
+
+Flags:
+  -h, --help   help for doctor
+
+Global Flags:
+      --api-base-url string   API base URL (Chab default uses www.chab.ai/v1; custom base URLs use <base-url>/v1)
+      --auth-file string      path to the CLI auth file
+      --base-url string       product web base URL
+      --config string         path to the CLI config file
+      --debug                 write redacted request details to stderr
+      --include-meta          include safe response metadata in machine output where supported
+      --jq string             filter supported JSON output with a jq expression
+      --json                  print stable JSON output where supported
+      --locale string         response language sent as Accept-Language (en or de)
+      --no-ansi               disable ANSI terminal controls and paging where supported
+      --no-color              disable color in human output where supported
+      --no-pager              disable pager use for long human output where supported
+      --no-prompt             fail instead of prompting for interactive input
+      --plain                 print copy-safe plain output where supported
+      --profile string        profile to use for this invocation
+      --template string       render supported JSON output with a Go text/template
+      --yes                   accept supported confirmations for risky or destructive operations; does not supply missing input
