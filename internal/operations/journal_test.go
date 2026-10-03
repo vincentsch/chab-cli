@@ -5,6 +5,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -33,7 +34,7 @@ func TestJournalPreparesPrivateRecordAndProjectionOmitsRecoveryMaterial(t *testi
 	if err != nil {
 		t.Fatalf("Stat() error = %v", err)
 	}
-	if got := info.Mode().Perm(); got != 0o600 {
+	if got := info.Mode().Perm(); runtime.GOOS != "windows" && got != 0o600 {
 		t.Fatalf("record mode = %04o, want 0600", got)
 	}
 	projection := Projection(prepared.Record)

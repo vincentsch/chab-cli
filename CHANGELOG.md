@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Windows private files
+
+- Protect new Windows action journals, auth state, approvals, and private downloads with a current-user ACL at file creation, including when a custom parent directory grants broad inherited access. Existing files are tightened when rewritten; no new binary is tagged yet.
+
 ## 0.1.1 — Full public beta
 
 - Discover the backend's complete 19-operation free catalog dynamically, with scoped file/model helpers and fresh authority checks. Private management and connected-account tools remain unavailable to guests.

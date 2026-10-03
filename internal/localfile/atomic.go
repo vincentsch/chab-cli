@@ -89,15 +89,8 @@ func createTemp(dir, base string, mode os.FileMode) (*os.File, string, error) {
 			return nil, "", err
 		}
 		path := filepath.Join(dir, "."+base+".tmp-"+suffix)
-		file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_EXCL, mode)
+		file, err := openExclusiveTemp(path, mode)
 		if err == nil {
-			// OpenFile honors umask; Chmod narrows or restores the exact final
-			// mode before the caller writes any bytes.
-			if err := file.Chmod(mode); err != nil {
-				_ = file.Close()
-				_ = os.Remove(path)
-				return nil, "", err
-			}
 			return file, path, nil
 		}
 		if errors.Is(err, os.ErrExist) {
