@@ -104,6 +104,12 @@ Follow the backend's current hosted MCP setup and consent guidance for the
 actual environment you use. Approval is checked against the current OAuth
 principal and backend policy on each call; removing a local profile does not
 revoke a hosted connection.
+For hosted-created results, use the backend's `chab_operation_artifact` tool
+for bounded inline content or a short-lived download link. A user's own
+document needs the backend's one-use `chab_file_upload_link` browser handoff
+before `convert.file`; a chat attachment is not automatically transferred to
+the MCP server. These hosted files belong to that exact OAuth connection, so
+this CLI and its separate REST credential cannot fetch them.
 
 Use separate entries such as `product-local` and `product-hosted` if you use
 both transports. Their credentials and tool catalogs are independent.

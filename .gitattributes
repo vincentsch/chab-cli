@@ -2,5 +2,7 @@
 manual/commands/*.md text eol=lf
 .agents/skills/**/*.md text eol=lf
 .claude/skills/**/*.md text eol=lf
-.vilt-agent-skill/*.md text eol=lf
-.vilt-agent-skill/manifest.sha256 text eol=lf
+.chab-agent-skill/*.md text eol=lf
+.chab-agent-skill/manifest.sha256 text eol=lf
+internal/chabcontract/testdata/** text eol=lf
+*.sh text eol=lf

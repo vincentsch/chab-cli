@@ -110,6 +110,13 @@ For a browser-issued guest trial credential, use `chab setup` locally or a
 user-managed `CHAB_API_KEY` secret. The guest REST bearer is not a hosted MCP
 OAuth token. Hosted MCP at the backend `/mcp` URL uses browser OAuth/PKCE,
 not the CLI's local stdio/REST key; check live compatibility for availability.
+On a hosted connection, use `chab_operation_artifact` with `content: "inline"`
+for small images or paged text, or `content: "link"` for a larger download.
+The returned link is a short-lived bearer capability: do not post or log it.
+For your own document, `chab_file_upload_link` opens a one-time browser upload;
+wait for scanning and pass its `file_id` to `convert.file`. A chat attachment
+is not automatically uploaded to Chab, and a local CLI/REST credential cannot
+retrieve another hosted connection's private artifact or file.
 Local MCP discovery follows the backend's live guest compatibility list, not
 a fixed two-tool trial. The full beta exposes eligible provider operations
 across search, contacts, SEO, business data, scraping, screenshots, conversion,

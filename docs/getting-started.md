@@ -79,6 +79,10 @@ go run ./cmd/chab mcp serve --help
 `version`, `commit`, `date`, `go_version`, `os`, and `arch`. `chab doctor`
 runs without credentials and reports readiness without creating state, but it
 checks compatibility at the configured API host; it is not offline.
+If doctor reports `guest trial cannot continue`, the trial may be expired or
+claimed. It does not assume which happened. Check the browser trial for an
+eligible guest credential, or sign in to an existing admitted account; new
+account registration is closed in the initial public beta.
 
 ## Install Agent Skills
 

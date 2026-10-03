@@ -229,8 +229,8 @@ func apiErrorFinding(err error) []finding {
 			detail += "; issue a new credential in the browser trial UI if eligible"
 		case "signup_required":
 			id = "credential.source"
-			summary = "guest trial has been claimed"
-			detail += "; sign in and use a team API key"
+			summary = "guest trial cannot continue"
+			detail += "; the trial may be expired or claimed; use an eligible browser trial or sign in to an existing account"
 		case "api_access_not_included", "subscription_unhealthy", "paid_plan_required":
 			id = "token_controls"
 			summary = "API access is unavailable"
